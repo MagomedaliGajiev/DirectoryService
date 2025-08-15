@@ -1,10 +1,35 @@
-﻿using System.Text.RegularExpressions;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
+using DirectoryService.Domain.DepartmentLocations;
+using DirectoryService.Domain.DepartmentPositions;
 using DirectoryService.Domain.Shared;
 
 namespace DirectoryService.Domain.Departments;
 public class Department
 {
+    private readonly List<Department> _childrenDepartments = [];
+    private readonly List<DepartmentLocation> _departmentLocations = [];
+    private readonly List<DepartmentPosition> _departmentPositions = [];
+
+    private Department(
+        DepartmentId id,
+        DepartmentName name,
+        Identifier identifier,
+        Path path,
+        int depth,
+        IEnumerable<DepartmentLocation> departmentLocations)
+    {
+        Id = id;
+        Name = name;
+        Identifier = identifier;
+        IsActive = true;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+        ChildrenCount = ChildrenDepartments.Count;
+        Path = path;
+        Depth = depth;
+        _departmentLocations = departmentLocations.ToList();
+    }
+
     public DepartmentId Id { get; private set; } = null!;
 
     public DepartmentName Name { get; private set; } = null!;
@@ -24,95 +49,46 @@ public class Department
     public DateTime CreatedAt { get; private set; }
 
     public DateTime UpdatedAt { get; private set; }
-}
 
-public class Identifier
-{
-    private Identifier(string value)
+    public IReadOnlyList<Department> ChildrenDepartments => _childrenDepartments;
+
+    public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentLocations;
+
+    public IReadOnlyList<DepartmentPosition> DepartmentPositions => _departmentPositions;
+
+    public static Result<Department, Error> CreateParent(
+        DepartmentName name,
+        Identifier identifier,
+        IEnumerable<DepartmentLocation> departmentLocations,
+        DepartmentId? departmentId = null)
     {
-        Value = value;
-    }
+        var departmentLocationsList = departmentLocations.ToList();
 
-    public const int IDENTIFIER_MIN_LENGHT = 3;
-
-    public const int IDENTIFIER_MAX_LENGHT = 150;
-
-    private static readonly Regex _identifierRegex = new("^[a-zA-Z]+$", RegexOptions.Compiled);
-
-    public string Value { get; }
-
-    public static Result<Identifier, Error> Create(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
+        if (departmentLocationsList.Count == 0)
         {
-            return GeneralErrors.ValueIsRequired("identifier");
+            return Error.Validation("department.location", "Department locations must contain at least one location");
         }
 
-        if (!_identifierRegex.IsMatch(value))
+        var path = Path.CreateParent(identifier);
+        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), name, identifier, path, 0, departmentLocationsList);
+    }
+
+    public static Result<Department, Error> CreateChild(
+        DepartmentName name,
+        Identifier identifier,
+        Department parent,
+        IEnumerable<DepartmentLocation> departmentLocations,
+        DepartmentId? departmentId = null)
+    {
+        var departmentLocationsList = departmentLocations.ToList();
+
+        if (departmentLocationsList.Count == 0)
         {
-            return GeneralErrors.ValueIsInvalid("identifier");
+            return Error.Validation("department.location", "Department locations must contain at least one location");
         }
 
-        if (value.Length is < IDENTIFIER_MIN_LENGHT or > IDENTIFIER_MAX_LENGHT)
-        {
-            return GeneralErrors.ValueIsInvalid("identifier");
-        }
+        var path = parent.Path.CreateChild(identifier);
 
-        return new Identifier(value);
-    }
-}
-
-public record DepartmentName
-{
-    public const int NAME_MIN_LENGHT = 3;
-    public const int NAME_MAX_LENGHT = 150;
-
-    private DepartmentName(string value)
-    {
-        Value = value;
-    }
-
-    public string Value { get; }
-
-    public static Result<DepartmentName, Error> Create(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return GeneralErrors.ValueIsRequired("department name");
-        }
-
-        if (value.Length is < NAME_MIN_LENGHT or > NAME_MAX_LENGHT)
-        {
-            return GeneralErrors.ValueIsInvalid("department name");
-        }
-
-        return new DepartmentName(value);
-    }
-}
-
-public record Path
-{
-    private Path(string value)
-    {
-        Value = value;
-    }
-
-    private const char SEPARATOR = '/';
-
-    public string Value { get; }
-
-    public static Path CreateParent(Identifier identifier)
-    {
-        return new Path(identifier.Value);
-    }
-
-    public Path CreateChild(Identifier childIdentifier)
-    {
-        return new Path(Value + SEPARATOR + childIdentifier.Value);
-    }
-
-    public static Path From(string value)
-    {
-        return new Path(value);
+        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), name, identifier, path, parent.Depth + 1, departmentLocationsList);
     }
 }
