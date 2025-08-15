@@ -84,8 +84,8 @@ public class Department
 
     public static Result<Department, Error> CreateChild(
         DepartmentName name,
-        Identifier identifier,
         Department parent,
+        Identifier identifier,
         IEnumerable<DepartmentLocation> departmentLocations,
         DepartmentId? departmentId = null)
     {
