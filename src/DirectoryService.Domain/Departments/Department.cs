@@ -12,6 +12,7 @@ public class Department
 
     private Department(
         DepartmentId id,
+        DepartmentId? parentId,
         DepartmentName name,
         Identifier identifier,
         Path path,
@@ -19,6 +20,7 @@ public class Department
         IEnumerable<DepartmentLocation> departmentLocations)
     {
         Id = id;
+        ParentId = parentId;
         Name = name;
         Identifier = identifier;
         IsActive = true;
