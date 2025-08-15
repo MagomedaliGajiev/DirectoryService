@@ -72,7 +72,14 @@ public class Department
         }
 
         var path = Path.CreateParent(identifier);
-        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), name, identifier, path, 0, departmentLocationsList);
+        return new Department(
+            departmentId ?? new DepartmentId(Guid.NewGuid()),
+            null,
+            name,
+            identifier,
+            path,
+            0,
+            departmentLocationsList);
     }
 
     public static Result<Department, Error> CreateChild(
@@ -91,6 +98,13 @@ public class Department
 
         var path = parent.Path.CreateChild(identifier);
 
-        return new Department(departmentId ?? new DepartmentId(Guid.NewGuid()), name, identifier, path, parent.Depth + 1, departmentLocationsList);
+        return new Department(
+            departmentId ?? new DepartmentId(Guid.NewGuid()),
+            parent.Id,
+            name,
+            identifier,
+            path,
+            parent.Depth + 1,
+            departmentLocationsList);
     }
 }
