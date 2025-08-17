@@ -1,14 +1,31 @@
 ﻿using CSharpFunctionalExtensions;
+using DirectoryService.Domain.DepartmentLocations;
 using DirectoryService.Domain.Shared;
 
 namespace DirectoryService.Domain.Locations;
 public class Location
 {
+    //EF Core
+    private Location()
+    { }
+
+    private List<Address> _addresses = [];
+    private List<DepartmentLocation> _departmentLocations = [];
+
+    public Location(LocationName name, TimeZone timeZone, Address address)
+    {
+        Id = new LocationId(Guid.NewGuid());
+        Name = name;
+        TimeZone = timeZone;
+        IsActive = true;
+        _addresses.Add(address);
+        CreatedAt = DateTime.UtcNow;
+        UpdateAt = DateTime.UtcNow;
+    }
+
     public LocationId Id { get; private set; }
 
     public LocationName Name { get; private set; }
-
-    public Address Address { get; private set; }
 
     public TimeZone TimeZone { get; private set; }
 
@@ -17,56 +34,19 @@ public class Location
     public DateTime CreatedAt { get; private set; }
 
     public DateTime UpdateAt { get; private set; }
-}
 
-public record LocationName
-{
-    private LocationName(string value)
+    public IReadOnlyList<Address> Addresses => _addresses;
+
+    public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentLocations;
+
+    public UnitResult<Error> AddAddres(Address address)
     {
-        Value = value;
+        if (Addresses.Contains(address))
+        {
+            return Error.Validation("location.address", "Address already exists", "Address");
+        }
+
+        _addresses.Add(address);
+        return UnitResult.Success<Error>();
     }
-
-    public const int NAME_MIN_LENGTH = 3;
-    public const int NAME_MAX_LENGTH = 120;
-
-    public string Value { get; }
-
-    public static Result<LocationName, Error> Create(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return GeneralErrors.ValueIsRequired("value");
-
-        if (value.Length is < NAME_MAX_LENGTH or > NAME_MAX_LENGTH)
-            return GeneralErrors.ValueIsInvalid(value);
-
-        return new LocationName(value);
-    }
-}
-
-public record Address
-{
-    // EF Core
-    private Address() { }
-
-    public Address(
-        string city,
-        string street,
-        string houseNumber,
-        string? number)
-    {
-        City = city;
-        Street = street;
-        HouseNumber = houseNumber;
-        Number = number;
-    }
-
-    public string City { get; }
-
-    public string Street { get; }
-
-    public string HouseNumber { get; }
-
-    public string? Number { get; }
-
-    public string FullAddress(string locationName) => $"{locationName}({City} {Street} {HouseNumber} {Number})";
 }

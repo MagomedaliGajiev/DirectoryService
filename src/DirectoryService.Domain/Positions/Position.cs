@@ -6,7 +6,7 @@ public class Position
     { }
 
     public Position(
-    string name,
+    PositionName name,
     string? description)
     {
         Id = new PositionId(Guid.NewGuid());
@@ -19,7 +19,7 @@ public class Position
 
     public PositionId Id { get; private set; }
 
-    public string Name { get; private set; }
+    public PositionName Name { get; private set; }
 
     public string? Description { get; private set; }
 
