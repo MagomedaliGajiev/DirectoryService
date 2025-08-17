@@ -68,4 +68,3 @@ public enum ErrorType
     AUTHENTICATION,
     AUTHORIZATION,
 }
-}
