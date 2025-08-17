@@ -10,6 +10,11 @@ public class Department
     private readonly List<DepartmentLocation> _departmentLocations = [];
     private readonly List<DepartmentPosition> _departmentPositions = [];
 
+    // EF Core
+    private Department()
+    {
+    }
+
     private Department(
         DepartmentId id,
         DepartmentId? parentId,

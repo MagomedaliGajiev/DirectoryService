@@ -27,7 +27,7 @@ public class DepartmentLocationConfiguration : IEntityTypeConfiguration<Departme
             .HasColumnOrder(1);
 
         builder.Property(dl => dl.DepartmentId)
-            .HasColumnName("location_id")
+            .HasColumnName("department_id")
             .IsRequired()
             .HasConversion(dl => dl.Value, v => new DepartmentId(v))
             .HasColumnOrder(3);
