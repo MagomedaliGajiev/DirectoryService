@@ -20,7 +20,7 @@ public class Location
         IsActive = true;
         _addresses.Add(address);
         CreatedAt = DateTime.UtcNow;
-        UpdateAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public LocationId Id { get; private set; }
@@ -33,13 +33,13 @@ public class Location
 
     public DateTime CreatedAt { get; private set; }
 
-    public DateTime UpdateAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; }
 
     public IReadOnlyList<Address> Addresses => _addresses;
 
     public IReadOnlyList<DepartmentLocation> DepartmentLocations => _departmentLocations;
 
-    public UnitResult<Error> AddAddres(Address address)
+    public UnitResult<Error> AddAddress(Address address)
     {
         if (Addresses.Contains(address))
         {

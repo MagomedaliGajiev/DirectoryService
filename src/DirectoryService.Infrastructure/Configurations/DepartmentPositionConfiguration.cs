@@ -31,5 +31,17 @@ public class DepartmentPositionConfiguration : IEntityTypeConfiguration<Departme
             .IsRequired()
             .HasConversion(dl => dl.Value, v => new DepartmentId(v))
             .HasColumnOrder(2);
+
+        builder
+            .HasOne<Position>()
+            .WithMany()
+            .HasForeignKey(dp => dp.PositionId)
+            .IsRequired();
+
+        builder
+            .HasOne<Department>()
+            .WithMany(d => d.DepartmentPositions)
+            .HasForeignKey(dp => dp.DepartmentId)
+            .IsRequired();
     }
 }

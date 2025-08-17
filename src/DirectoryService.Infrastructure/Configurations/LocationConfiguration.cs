@@ -42,7 +42,7 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
             .IsRequired()
             .HasColumnOrder(4);
 
-        builder.Property(l => l.UpdateAt)
+        builder.Property(l => l.UpdatedAt)
             .HasColumnName("updated_at")
             .IsRequired()
             .HasColumnOrder(5);
