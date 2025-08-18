@@ -21,7 +21,7 @@ public record Path
         return new Path(Value + SEPARATOR + childIdentifier.Value);
     }
 
-    public static Path From(string value)
+    public static Path Create(string value)
     {
         return new Path(value);
     }
