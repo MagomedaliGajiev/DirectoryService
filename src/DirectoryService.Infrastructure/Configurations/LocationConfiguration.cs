@@ -50,6 +50,11 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
         builder.OwnsMany(l => l.Addresses, ab =>
         {
             ab.ToJson("addresses");
+            ab.WithOwner().HasForeignKey("LocationId");
+            ab.Property<string>("City");
+            ab.Property<string>("Street");
+            ab.Property<string>("HouseNumber");
+            ab.Property<string>("Number");
         });
     }
 }

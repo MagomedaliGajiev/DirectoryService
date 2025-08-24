@@ -20,7 +20,7 @@ public record LocationName
         if (string.IsNullOrWhiteSpace(value))
             return GeneralErrors.ValueIsRequired("value");
 
-        if (value.Length is < NAME_MAX_LENGTH or > NAME_MAX_LENGTH)
+        if (value.Length is < NAME_MIN_LENGTH or > NAME_MAX_LENGTH)
             return GeneralErrors.ValueIsInvalid(value);
 
         return new LocationName(value);

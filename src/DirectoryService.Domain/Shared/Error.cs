@@ -1,6 +1,5 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿namespace DirectoryService.Domain.Shared;
 
-namespace DirectoryService.Domain.Shared;
 public class Error
 {
     private Error(string code, string message, ErrorType type, string? invalidField = null)
