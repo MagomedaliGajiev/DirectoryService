@@ -16,7 +16,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost]
-    public  async Task<IActionResult> CreateLocation(
+    public async Task<IActionResult> CreateLocation(
         [FromBody] CreateLocationCommand command,
         CancellationToken cancellationToken)
     {

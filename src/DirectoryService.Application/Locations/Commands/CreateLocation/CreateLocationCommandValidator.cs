@@ -36,7 +36,6 @@ public class CreateLocationCommandValidator : AbstractValidator<CreateLocationCo
         }
         catch
         {
-
             return false;
         }
     }
