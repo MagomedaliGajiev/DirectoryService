@@ -8,7 +8,7 @@ public class CreateLocationCommand : IRequest<OperationResult<LocationDto>>
 {
     public string Name { get; set; } = null!;
 
-    public AddressModel Address { get; set; } = null!;
+    public AddressDto Address { get; set; } = null!;
 
     public string Timezone { get; set; } = null!;
 }

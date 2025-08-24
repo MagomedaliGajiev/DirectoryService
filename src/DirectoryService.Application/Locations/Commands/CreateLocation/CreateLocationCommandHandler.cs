@@ -49,7 +49,13 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
                 address);
 
             await _locationRepository.AddAsync(location, cancellationToken);
-            await _locationRepository.SaveChangesAsync(cancellationToken);
+            var saveResult = await _locationRepository.SaveChangesAsync(cancellationToken);
+
+            if (saveResult.IsFailure)
+            {
+                _logger.LogError("Failed to save location: {Error}", saveResult.Error);
+                return OperationResult<LocationDto>.Failure(saveResult.Error);
+            }
 
             var locationDto = new LocationDto
             {
@@ -72,8 +78,9 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating location");
-            return OperationResult<LocationDto>.Failure(Error.Failure("location.creation.failed", "Failed to create location"));
+            _logger.LogError(ex, "Unexpected error creating location");
+            return OperationResult<LocationDto>.Failure(
+                Error.Failure("location.unexpected", "An unexpected error occurred"));
         }
     }
 }
