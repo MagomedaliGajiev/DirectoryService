@@ -1,4 +1,4 @@
-﻿using DirectoryService.Domain.Shared;
+﻿using Shared;
 
 namespace DirectoryService.Application.Models;
 

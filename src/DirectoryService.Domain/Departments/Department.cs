@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Domain.DepartmentLocations;
 using DirectoryService.Domain.DepartmentPositions;
-using DirectoryService.Domain.Shared;
+using Shared;
 
 namespace DirectoryService.Domain.Departments;
 public class Department

@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Domain.DepartmentLocations;
-using DirectoryService.Domain.Shared;
+using Shared;
 
 namespace DirectoryService.Domain.Locations;
 public class Location

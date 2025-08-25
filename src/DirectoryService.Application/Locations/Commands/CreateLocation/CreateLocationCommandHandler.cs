@@ -3,9 +3,9 @@ using DirectoryService.Application.Models;
 using DirectoryService.Contracts.Locations.Commands.CreateLocation;
 using DirectoryService.Contracts.Locations.Dtos;
 using DirectoryService.Domain.Locations;
-using DirectoryService.Domain.Shared;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Shared;
 using TimeZone = DirectoryService.Domain.Locations.TimeZone;
 
 namespace DirectoryService.Application.Locations.Commands.CreateLocation;
