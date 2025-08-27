@@ -87,7 +87,7 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error creating location");
-            return Error.Failure("location.unexpected", "An unexpected error occurred").ToErrors();
+            return GeneralErrors.Failure("An unexpected error occurred").ToErrors();
         }
     }
 }

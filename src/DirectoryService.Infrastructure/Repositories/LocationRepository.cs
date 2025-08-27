@@ -32,7 +32,7 @@ public class LocationRepository : ILocationRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Fail to insert location");
-            return Error.Failure("loction.insert", "Fail to insert location");
+            return GeneralErrors.Failure("Fail to insert location");
         }
     }
 }

@@ -84,7 +84,7 @@ public enum ErrorType
     CONFLICT,
 
     /// <summary>
-    /// Ошибка аутентификации
+    /// Ошибка аутентификации.
     /// </summary>
     AUTHENTICATION,
 
