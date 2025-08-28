@@ -1,4 +1,6 @@
-﻿namespace DirectoryService.Domain.Shared;
+﻿using System.Text.Json.Serialization;
+
+namespace Shared;
 
 public class Error
 {
@@ -16,6 +18,7 @@ public class Error
 
     public string Message { get; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public ErrorType Type { get; }
 
     public string? InvalidField { get; }
@@ -60,10 +63,33 @@ public class Error
 
 public enum ErrorType
 {
+    /// <summary>
+    /// Ошибка с валидацией.
+    /// </summary>
     VALIDATION,
+
+    /// <summary>
+    /// Ошибка ничего не найдено.
+    /// </summary>
     NOT_FOUND,
+
+    /// <summary>
+    /// Ошибка сервера.
+    /// </summary>
     FAILURE,
+
+    /// <summary>
+    /// Ошибка конфликт.
+    /// </summary>
     CONFLICT,
+
+    /// <summary>
+    /// Ошибка аутентификации.
+    /// </summary>
     AUTHENTICATION,
+
+    /// <summary>
+    /// Ошибка авторизации.
+    /// </summary>
     AUTHORIZATION,
 }

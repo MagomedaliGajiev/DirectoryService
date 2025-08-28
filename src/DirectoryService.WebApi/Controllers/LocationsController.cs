@@ -1,4 +1,6 @@
 ﻿using DirectoryService.Contracts.Locations.Commands.CreateLocation;
+using DirectoryService.Contracts.Locations.Dtos;
+using DirectoryService.WebApi.EndpointResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,15 +18,10 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateLocation(
+    public async Task<EndpointResult<LocationDto>> CreateLocation(
         [FromBody] CreateLocationCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command, cancellationToken);
-
-        if (result.IsSuccess)
-            return Ok(result.Value);
-
-        return BadRequest(result.Error);
+        return await _mediator.Send(command, cancellationToken);
     }
 }

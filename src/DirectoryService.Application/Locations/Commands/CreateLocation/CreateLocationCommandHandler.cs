@@ -1,41 +1,49 @@
-﻿using DirectoryService.Application.Locations.Interfaces;
-using DirectoryService.Application.Models;
+﻿using CSharpFunctionalExtensions;
+using DirectoryService.Application.Extensions;
+using DirectoryService.Application.Locations.Interfaces;
 using DirectoryService.Contracts.Locations.Commands.CreateLocation;
 using DirectoryService.Contracts.Locations.Dtos;
 using DirectoryService.Domain.Locations;
-using DirectoryService.Domain.Shared;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Shared;
 using TimeZone = DirectoryService.Domain.Locations.TimeZone;
 
 namespace DirectoryService.Application.Locations.Commands.CreateLocation;
 
-public class CreateLocationCommandHandler : IRequestHandler<CreateLocationCommand, OperationResult<LocationDto>>
+public class CreateLocationCommandHandler : IRequestHandler<CreateLocationCommand, Result<LocationDto, Errors>>
 {
     private readonly ILocationRepository _locationRepository;
+    private readonly IValidator<CreateLocationCommand> _validator;
     private readonly ILogger<CreateLocationCommandHandler> _logger;
 
     public CreateLocationCommandHandler(
         ILocationRepository locationRepository,
+        IValidator<CreateLocationCommand> validator,
         ILogger<CreateLocationCommandHandler> logger)
     {
         _locationRepository = locationRepository;
+        _validator = validator;
         _logger = logger;
     }
 
-    public async Task<OperationResult<LocationDto>> Handle(
+    public async Task<Result<LocationDto, Errors>> Handle(
         CreateLocationCommand request,
         CancellationToken cancellationToken)
     {
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            return validationResult.ToErrors();
+        }
+
         try
         {
             var nameResult = LocationName.Create(request.Name);
-            if (nameResult.IsFailure)
-                return OperationResult<LocationDto>.Failure(nameResult.Error);
 
             var timezoneResult = TimeZone.Create(request.Timezone);
-            if (timezoneResult.IsFailure)
-                return OperationResult<LocationDto>.Failure(timezoneResult.Error);
 
             var address = new Address(
                 request.Address.City,
@@ -54,7 +62,7 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
             if (saveResult.IsFailure)
             {
                 _logger.LogError("Failed to save location: {Error}", saveResult.Error);
-                return OperationResult<LocationDto>.Failure(saveResult.Error);
+                return saveResult.Error.ToErrors();
             }
 
             var locationDto = new LocationDto
@@ -74,13 +82,12 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
                 UpdatedAt = location.UpdatedAt,
             };
 
-            return OperationResult<LocationDto>.Success(locationDto);
+            return locationDto;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error creating location");
-            return OperationResult<LocationDto>.Failure(
-                Error.Failure("location.unexpected", "An unexpected error occurred"));
+            return GeneralErrors.Failure("An unexpected error occurred").ToErrors();
         }
     }
 }

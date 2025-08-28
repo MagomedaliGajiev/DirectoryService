@@ -1,8 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using DirectoryService.Application.Locations.Interfaces;
 using DirectoryService.Domain.Locations;
-using DirectoryService.Domain.Shared;
 using Microsoft.Extensions.Logging;
+using Shared;
 
 namespace DirectoryService.Infrastructure.Repositories;
 
@@ -32,7 +32,7 @@ public class LocationRepository : ILocationRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Fail to insert location");
-            return Error.Failure("loction.insert", "Fail to insert location");
+            return GeneralErrors.Failure("Fail to insert location");
         }
     }
 }

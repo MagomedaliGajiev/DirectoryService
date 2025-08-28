@@ -7,25 +7,25 @@ public class CreateLocationCommandValidator : AbstractValidator<CreateLocationCo
     public CreateLocationCommandValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .MinimumLength(3).WithMessage("Name must be at least 3 characters")
-            .MaximumLength(120).WithMessage("Name must not exceed 120 characters");
+            .NotEmpty().WithMessage("Name is required").WithErrorCode("name.required")
+            .MinimumLength(3).WithMessage("Name must be at least 3 characters").WithErrorCode("name.minlength")
+            .MaximumLength(120).WithMessage("Name must not exceed 120 characters").WithErrorCode("name.maxlength");
 
         RuleFor(x => x.Address)
-            .NotNull().WithMessage("Address is required");
+            .NotNull().WithMessage("Address is required").WithErrorCode("address.required");
 
         RuleFor(x => x.Address.City)
-            .NotEmpty().WithMessage("City is required");
+            .NotEmpty().WithMessage("City is required").WithErrorCode("address.city.required");
 
         RuleFor(x => x.Address.Street)
-            .NotEmpty().WithMessage("Street is required");
+            .NotEmpty().WithMessage("Street is required").WithErrorCode("address.street.required");
 
         RuleFor(x => x.Address.HouseNumber)
-            .NotEmpty().WithMessage("HouseNumber is required");
+            .NotEmpty().WithMessage("HouseNumber is required").WithErrorCode("address.housenumber.required");
 
         RuleFor(x => x.Timezone)
-            .NotEmpty().WithMessage("Timezone is required")
-            .Must(BeValidTimezone).WithMessage("Invalid timezone");
+            .NotEmpty().WithMessage("Timezone is required").WithErrorCode("timezone.required")
+            .Must(BeValidTimezone).WithMessage("Invalid timezone").WithErrorCode("timezone.invalid");
     }
 
     private bool BeValidTimezone(string timezone)
