@@ -4,7 +4,7 @@ using DirectoryService.Domain.DepartmentPositions;
 using Shared;
 
 namespace DirectoryService.Domain.Departments;
-public class Department
+public sealed class Department
 {
     private readonly List<Department> _childrenDepartments = [];
     private readonly List<DepartmentLocation> _departmentLocations = [];

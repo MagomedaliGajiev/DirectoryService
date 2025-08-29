@@ -2,7 +2,7 @@
 using DirectoryService.Domain.Locations;
 
 namespace DirectoryService.Domain.DepartmentLocations;
-public class DepartmentLocation
+public sealed class DepartmentLocation
 {
     // EF Core
     public DepartmentLocation()
