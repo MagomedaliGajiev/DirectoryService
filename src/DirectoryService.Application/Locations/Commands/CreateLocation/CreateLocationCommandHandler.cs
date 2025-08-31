@@ -32,10 +32,15 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
         CreateLocationCommand request,
         CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Attempting to create a new location with name: {LocationName}", request.Name);
+
         var validationResult = await _validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
+            _logger.LogWarning(
+            "Validation failed for location creation request. Errors: {ValidationErrors}",
+            string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)));
             return validationResult.ToErrors();
         }
 
@@ -61,9 +66,16 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
 
             if (saveResult.IsFailure)
             {
-                _logger.LogError("Failed to save location: {Error}", saveResult.Error);
+                _logger.LogError(
+                "Failed to save location to database. Error: {ErrorCode} - {ErrorMessage}",
+                saveResult.Error.Code, saveResult.Error.Message);
+
                 return saveResult.Error.ToErrors();
             }
+
+            _logger.LogInformation(
+            "Location successfully created with ID: {LocationId} and name: {LocationName}",
+            location.Id.Value, location.Name.Value);
 
             var locationDto = new LocationDto
             {
@@ -86,7 +98,7 @@ public class CreateLocationCommandHandler : IRequestHandler<CreateLocationComman
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error creating location");
+            _logger.LogError(ex, "An unexpected error occurred while creating location");
             return GeneralErrors.Failure("An unexpected error occurred").ToErrors();
         }
     }

@@ -4,9 +4,17 @@ using DirectoryService.Infrastructure;
 using DirectoryService.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Shared;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 
@@ -41,6 +49,8 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddValidatorsFromAssembly(Assembly.Load("DirectoryService.Application"));
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {

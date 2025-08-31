@@ -27,11 +27,12 @@ public class LocationRepository : ILocationRepository
         try
         {
             var changes = await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Successfully saved {NumberOfChanges} changes to the database", changes);
             return Result.Success<int, Error>(changes);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Fail to insert location");
+            _logger.LogError(ex, "Failed to save changes to the database");
             return GeneralErrors.Failure("Fail to insert location");
         }
     }
